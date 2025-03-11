@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    transition: 0.5s ease ;
+}
+html,body{
+    height: 100%;
+    width: 100%;
+}
+body{
+    background: linear-gradient(rgba(0, 0, 0, 0.89), rgba(0, 0, 0, 0.863)), url(./images/1.jpg) no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+}
+h2{
+    text-align: center;
+    margin-bottom:3rem;
+}
+.Login{
+    display: flex;
+    justify-content: space-around;
+    border-radius: 18px;
+    background-color: #fff;
+}
+.login-pic{
+    padding: 25px 10px;
+}
+.login-pic img {
+    width: 400px;
+    position: relative;
+    top: 181px;
+}
+.login-form{
+    width: 484px;
+    padding: 45px 45px 69px 45px;
+}
+.login-form .group{
+    width: 100%;
+
+}
+.login-form .group input,.login-form .group select{
+    color: black;
+    border-radius: 25px;
+    display: block;
+    padding: 8px 50px;
+    width: 100%;
+    margin: 18px 0;
+    background-color: #e7e7e7;
+    border: none;
+    height: 50px;
+    cursor: pointer;
+}
+select {
+    -webkit-appearance: none;  /* Safari, Chrome */
+    -moz-appearance: none;     /* Firefox */
+    appearance: none;          /* Standard */
+    padding-right: 20px; /* Ensure space for the custom arrow */
+}
+.login-form .group input::placeholder{
+    text-align: center;
+}
+
+.icon {
+    padding: 15px 18px;
+    font-size: 18px;
+    color: black;
+    position: absolute;
+}
+
+.login-form .btn{
+    width: 100%;
+}
+
+.login-form .btn input{
+    border: none;
+    padding: 15px 20px;
+    border-radius: 25px;
+    background:#4cc2c7;
+    width: 100%;
+    color: #fff;
+    border: none;
+
+}
+.login-form .btn input:hover {
+    background: #333;
+}
+.link{
+    text-align: center;
+    padding: 10px;
+}
+.link span a{
+    color: #333;
+    text-decoration: none;
+}
+.link span a:hover{
+    color: #4cc2c7;
+    text-decoration: none;
+}
+.link span{
+    color: grey;
+
+}
+@media screen and (max-width:980px) {
+    .login-pic{
+        display: none;
+    }
+    .login-form .group {
+        width: 100%;
+        margin: 33px 0px;
+    }
+    .Login{
+        width: 85%;
+    }
+    .login-form {
+        padding: 43px 2px 44px 2px;
+    }
+
+    .login-form .btn input{
+        padding: 10px 20px;
+        width: 65%;
+    }
+    .link span,.link span a{
+        font-size: 12px;
+    }
+    h2:nth-child(1){
+        font-size: 25px;
+    }
+}

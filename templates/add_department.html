@@ -1,0 +1,34 @@
+{% extends "Base.html" %}
+{% block content %}
+<div class="container text-center">
+
+    <h2>Add Department</h2>
+    <form method="post">
+        {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit btn btn-success">Add Department</button>
+</form>
+
+<h3>Existing Departments</h3>
+<ul>
+    {% for dept in departments %}
+    <li>{{ dept.name }}</li>
+    {% endfor %}
+</ul>
+</div>
+
+
+<script src="/static/js/jquery-3.3.1.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/custom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+  -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+    crossorigin="anonymous"></script> -->
+
+</body>
+
+</html>
+{% endblock %}
