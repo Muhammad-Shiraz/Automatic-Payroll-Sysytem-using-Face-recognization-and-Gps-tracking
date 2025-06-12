@@ -1,0 +1,192 @@
+{% extends "emp_base.html" %}
+{% load static %}
+{% block content %}
+<!-- Top Navbar -->
+
+
+
+
+
+
+<!-- Main Content -->
+<main class="col-md-8 col-sm-12" >
+    <div class="dashboard-header">
+        <div class="heading">
+            <h2 class="m-0">{{ employee.name }} </h2>
+            <p class="mb-1">It’s Your {{ present_days }} Working Day in TechZilla</p>
+        </div>
+        <div>
+            <h3 class="m-0">02 Feb, 2022</h3>
+            <p class="mb-1">Wednesday, 05:42 PM</p>
+        </div>
+    </div>
+    <div class="row my-2">
+        <div class="col-md-4 ">
+            <div class="card text-light">
+                <div class="card-body">
+                    <h5>Total Present</h5>
+                    <p class="">{{ present_days }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-light">
+                <div class="card-body">
+                    <h5>Payroll</h5>
+                    <p>Rs.{{ total_monthly_pay }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-light">
+                <div class="card-body">
+                    <h5>Task</h5>
+                    <p>{{ performancekpi.task_completion_rate }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="leave-card">
+        <!-- <div class="col-lg-4 chart-container">
+                            <canvas id="leaveChart"></canvas>
+                            <div id="overallScoreGauge" style="width: 300px; height: 300px;"></div>
+                        </div>
+                        <div class=" col-lg-8  leave-details">
+                            <div class="heading">
+                                <h3>Used Leaves</h3>
+                                <div class="detail">
+                                    <i class="material-icons text-danger">info</i>
+                                    <a href="#pablo">See details</a>
+                                </div>
+                            </div>
+                            <div class="leave-item">
+                                <span>Casual Leave</span>
+                                <div class="casual-bar">
+                                    <div class="progres casual"></div>
+                                </div>
+                                <span>1 of 10</span>
+                            </div>
+                            <div class="leave-item">
+                                <span>Sick Leave</span>
+                                <div class="sick-bar">
+                                    <div class="progres sick"></div>
+                                </div>
+                                <span>5 of 10</span>
+                            </div>
+                            <div class="leave-item">
+                                <span>On Duty</span>
+                                <div class="duty-bar">
+                                    <div class="progres on-duty"></div>
+                                </div>
+                                <span>3 of 10</span>
+                            </div>
+                            <div class="leave-item">
+                                <span>Loss of Pay</span>
+                                <div class="loss-bar">
+                                    <div class="progres loss-pay"></div>
+                                </div>
+                                <span>6 of 10</span>
+                            </div>
+                            <div class="leave-item">
+                                <span>Work Home</span>
+                                <div class="home-bar">
+                                    <div class="progres wfh"></div>
+                                </div>
+                                <span>4 of 10</span>
+                            </div>
+                            <button class="apply-btn">Apply Leave</button> -->
+        <!-- </div> -->
+            <!-- <div id="overallScoreGauge" style="width: 300px; height: 300px;"></div> -->
+        <div id="kpiChart" style="width: 100%; height: 300px;float: left;"></div>
+        <div class="card border-0" style="background: none; padding: 0 20px;float: right;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h5>Attendance Breakdown</h5>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <div style="margin-bottom: 18px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Auto Attendance</span>
+                        <span>{{ attendance_progress.auto_attendance }} days</span>
+                    </div>
+                    <div style="background: #333; border-radius: 10px; height: 6px; overflow: hidden;">
+                        <div style="height: 100%; width: {{ attendance_progress.auto_attendance }}0%; background: #00e5ff;"></div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 18px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Manual Attendance</span>
+                        <span>{{ attendance_progress.manual_attendance }} days</span>
+                    </div>
+                    <div style="background: #333; border-radius: 10px; height: 6px; overflow: hidden;">
+                        <div style="height: 100%; width: {{ attendance_progress.manual_attendance }}0%; background: #ffeb3b;"></div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 18px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Leave Days</span>
+                        <span>{{ attendance_progress.Leave_Days }} days</span>
+                    </div>
+                    <div style="background: #333; border-radius: 10px; height: 6px; overflow: hidden;">
+                        <div style="height: 100%; width: {{ attendance_progress.Leave_Days }}0%; background: #f06292;"></div>
+                    </div>
+                </div>
+                <div>
+        
+                    <a href="{% url 'submit_manual_attendance' %}" class="btn">Mark Manual Attendance</a>
+                </div>
+            </div>
+        </div>
+
+
+
+
+       
+    </div>
+
+    <div class="attendance-card" style="min-height: 450px; margin-top: 25px;">
+        <div class="card-header card-header-text">
+            <h5 class="card-title my-2">Attendance Pay Period</h5>
+        </div>
+        <div class="card-content  table-responsive">
+            <table class="table table-hover align-middle table-striped" style="font-size: 12px;" id="dataTable">
+
+                <thead>
+                    {% for record in attendance %}
+                    <tr>
+                        <td>{{ record.date }}</td>
+                        <td>{{ record.time_in }}</td>
+                        <td>{{ record.time_out }}</td>
+                        <td>
+                            <span
+                                class="badge {% if record.status == 'Present' %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ record.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No attendance records found.</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- Right Sidebar -->
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

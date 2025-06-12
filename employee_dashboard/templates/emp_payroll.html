@@ -1,0 +1,120 @@
+{% extends "emp_base.html" %}
+{% load static %}
+
+{% block content %}
+<main class="col-md-8 col-sm-12">
+    <h5 class="text-center mb-1">Monthly Payroll Overview</h5>
+
+    <!-- Bar Chart for Monthly Payroll -->
+    <div id="payrollChart" style="height: 300px;"></div>
+
+
+    <h5 class="my-3 text-center">Monthly Breakdown</h5>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle table-striped" style="font-size: 12px;">
+            <thead>
+                <tr>
+                    <th class="text-light">Month</th>
+                    <th class="text-light">Basic Salary</th>
+                    <th class="text-light">Bonus</th>
+                    <th class="text-light">Performance Bonus</th>
+                    <th class="text-light">Total Salary</th>
+                    <th class="text-light">Overtime</th>
+                    <th class="text-light">Status</th>
+                    <th class="text-light">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in combined_data %}
+                <tr>
+                    <td>{{ item.month }}</td>
+                    <td>Rs.{{ item.basic_salary }}</td>
+                    <td>Rs.{{ item.bonus }}</td>
+                    <td>Rs.{{ item.performance_bonus }}</td>
+                    <td>Rs.{{ item.total_salary }}</td>
+                    <td>Rs.{{ item.overtime }}</td>
+                    <td>{{ item.status }}</td>
+                    <td>
+                        <a href="{% url 'daily_payroll_view' item.record.month|date:'Y-m' %}" class="btn btn-sm" style="font-size: 12px;">📅 Daily Payroll</a>
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</main>
+
+{% block scripts %}
+<script>
+    var chartDom = document.getElementById('payrollChart');
+    var myChart = echarts.init(chartDom);
+
+    var option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['Total Salary', 'Bonus', 'Performance Bonus', 'Overtime'],
+            top: 30
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            data: {{ labels|safe }}
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                name: 'Total Salary',
+                type: 'bar',
+                data: {{ salary_data|safe }},
+                itemStyle: {
+                    color: '#4BC0C0'
+                }
+            },
+            {
+                name: 'Bonus',
+                type: 'bar',
+                data: {{ bonus_data|safe }},
+                itemStyle: {
+                    color: '#FFCD56'
+                }
+            },
+            {
+                name: 'Performance Bonus',
+                type: 'bar',
+                data: {{ performance_bonus|safe }},
+                itemStyle: {
+                    color: '#36A2EB'
+                }
+            },
+            {
+                name: 'Overtime',
+                type: 'bar',
+                data: {{ overtime_data|safe }},
+                itemStyle: {
+                    color: '#FF6384'
+                }
+            }
+        ]
+    };
+
+    myChart.setOption(option);
+</script>
+{% endblock %}
+
+{% endblock %}

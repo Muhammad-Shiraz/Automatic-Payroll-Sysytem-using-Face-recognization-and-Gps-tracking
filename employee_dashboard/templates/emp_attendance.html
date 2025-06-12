@@ -1,0 +1,46 @@
+{% extends "emp_base.html" %}
+{% load static %}
+{% block content %}
+
+<main class="col-md-8 col-sm-12">
+    <h5 class="my-2" style="text-align: center;">Profile Attendance</h5>
+    <!-- <div class="input-group mb-3">
+        <input type="text" class="form-control" id="search" placeholder="Search for an employee...">
+        <div class="input-group-append">
+            <button class="btn btn-primary" type="button">Search</button>
+        </div>
+    </div> -->
+
+    <div class="table-container mt-2">
+        <table class="table table-hover align-middle table-striped" style="font-size: 12px;">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-light">Date</th>
+                    <th class="text-light">Time In</th>
+                    <th class="text-light">Time Out</th>
+                    <th class="text-light">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in attendance %}
+                <tr>
+                    <td>{{ record.date }}</td>
+                    <td>{{ record.time_in }}</td>
+                    <td>{{ record.time_out }}</td>
+                    <td>
+                        <span class="badge {% if record.status == 'Present' %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ record.status }}
+                        </span>
+                    </td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted">No attendance records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+{% endblock %}

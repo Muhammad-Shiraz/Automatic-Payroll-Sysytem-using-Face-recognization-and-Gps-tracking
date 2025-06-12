@@ -1,0 +1,165 @@
+{% extends "Base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/payroll.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-2">
+    <div class="text-center mb-4">
+
+        <p class="fs-6">Payroll Details - {{ employee.name }} - {{ employee.employee_id }} - {{ employee.department }}
+        </p>
+        <!-- <p class="fs-6"><strong>Department:</strong> </p>
+        <p class="fs-6"><strong>Employee ID:</strong> </p> -->
+    </div>
+
+
+    <!-- PAYROLL GRAPH -->
+    <!-- <div>
+        <h5>Monthly Total Salary Graph</h5>
+        <canvas id="payrollChart" height="120"></canvas>
+    </div> -->
+
+
+    <!-- PAYROLL TABLE -->
+
+
+    <div class="card-body">
+        <p class="fs-5 text-dark">Monthly Data</p>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle table-striped" style="font-size: 12px;">
+                <thead class="">
+                    <tr>
+                        <th class="text-light">Month</th>
+                        <th class="text-light">Basic Salary</th>
+                        <th class="text-light">Bonus</th>
+                        <th class="text-light">Performnace Bonus</th>
+                        <th class="text-light">Total Salary</th>
+                        <th class="text-light">Total Hours</th>
+                        <th class="text-light">Start Date</th>
+                        <th class="text-light">End Date</th>
+                        <th class="text-light">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in payroll_data %}
+                    <tr>
+                        <td>{{ p.month }}</td>
+                        <td>Rs.{{ p.basic_salary }}</td>
+                        <td>Rs.{{ p.bonus }}</td>
+                        <td>Rs. {{p.performance_bonus}}</td>
+                        <td>Rs.{{ p.total_salary }}</td>
+                        <td>{{ p.total_hours }}</td>
+                        <td>{{ p.start_date }}</td>
+                        <td>{{ p.end_date }}</td>
+                        <td>{{ p.status }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8">No payroll data available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+    <div class="card-body">
+        <p class="fs-5 text-dark">Daily Payroll</p>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle table-striped" style="font-size: 12px;">
+                <thead class="">
+                    <tr>
+                        <th class="text-light">Date</th>
+                        <th class="text-light">Hours Worked</th>
+                        <th class="text-light">Overtime</th>
+                        <th class="text-light">Overtime Pay</th>
+                        <th class="text-light">Daily Salary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in daily_payroll %}
+                    <tr class="{% if forloop.counter > 3 %}hidden-row{% endif %}">
+                        <td>{{ entry.date }}</td>
+                        <td>{{ entry.hours_worked }}</td>
+                        <td>{{ entry.overtime }}</td>
+                        <td>{{ entry.overtimepay }}</td>
+                        <td>{{ entry.daily_salary }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="text-center">
+                <button id="load-more-btn" class="btn btn-secondary" onclick="showMoreRows()">Show More</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    
+</div>
+
+
+</div>
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const payrollData = JSON.parse('{{ monthly_data|safe|escapejs }}');
+
+    const labels = payrollData.map(item => item.month);
+    const data = payrollData.map(item => item.total_salary);
+
+    const ctx = document.getElementById('payrollChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Salary',
+                data: data,
+                fill: true,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: false
+                }
+            }
+        }
+    });
+</script>
+
+<!-- pagination -->
+<script>
+    // Initial number of records to display
+    const initialRows = 3;
+
+    // Function to show more rows
+    function showMoreRows() {
+        let hiddenRows = document.querySelectorAll('.hidden-row');
+        for (let i = 0; i < initialRows && i < hiddenRows.length; i++) {
+            hiddenRows[i].classList.remove('hidden-row');
+        }
+
+        // If there are no more hidden rows, hide the 'Load More' button
+        if (hiddenRows.length === 0 || hiddenRows[0].classList.contains('hidden-row')) {
+            document.getElementById('load-more-btn').style.display = 'none';
+        }
+    }
+
+    // Load more rows when the button is clicked
+    document.getElementById('load-more-btn').addEventListener('click', showMoreRows);
+</script>
+
+
+{% endblock %}

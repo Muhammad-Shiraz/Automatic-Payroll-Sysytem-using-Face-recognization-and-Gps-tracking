@@ -1,0 +1,242 @@
+{% extends "Base.html" %}
+
+
+
+{% block content %}
+
+
+<!-- Main Content -->
+<div class="container">
+
+
+    <!-- Statistics Section -->
+
+    <div class="row text-center">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-light">Total Employees</h5>
+                    <p class="card-text fs-5" id="totalEmployees">{{total_employees}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-light">Present</h5>
+                    <p class="card-text fs-5" id="presentEmployees">{{totalpresent}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-light">Absent</h5>
+                    <p class="card-text fs-5" id="absentEmployees">{{totalabsent}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-light">Attendance %</h5>
+                    <p class="card-text fs-5" id="attendancePercentage">90%</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+
+    <!-- In your filters section -->
+    <div class="col-md-2">
+        <input type="date" id="dateFilter" class="form-control" value="{{ selected_date|date:'Y-m-d' }}"
+            max="{{ date.today|date:'Y-m-d' }}">
+    </div>
+
+
+    <!-- Attendance Table -->
+    <div class="table-responsive mt-2">
+        <table class="table table-hover align-middle table-striped" style="font-size: 12px;">
+            <thead class="">
+
+                <tr>
+                    <th class="text-light">Employee ID</th>
+                    <th class="text-light">Image</th>
+                    <th class="text-light">Name</th>
+                    <th class="text-light">Department</th>
+                    <th class="text-light">Date</th>
+                    <th class="text-light">Check-In Time</th>
+                    <th class="text-light">Check-Out Time</th>
+                    <th class="text-light">Location</th>
+                    <th class="text-light">Status</th>
+                    <th class="text-light">Action</th>
+                </tr>
+            </thead>
+            <!-- Load custom filter  -->
+            {% load custom_filters %}
+            <tbody id="attendanceTable">
+                {% for emp in employees %}
+                {% with attendance_records|get_item:emp.employee_id as attendance %}
+                <tr>
+                    <td>{{ emp.employee_id }}</td>
+                    <td>
+                        {% if emp.employee_images %}
+                        <img src="{{ emp.employee_images.url }}" alt="Employee Image" width="36" height="36px"
+                            style="border-radius: 50%; margin-right: 8px;">
+                        {% else %}
+                        <span>No Image</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ emp.name }}</td>
+                    <td>{{ emp.department.name }}</td>
+
+                    {% if attendance %}
+                    <td>{{ selected_date|date:'d-m-Y' }}</td>
+                    <td>{{ attendance.time_in }}</td>
+                    <td>{{ attendance.time_out|default:"--" }}</td>
+                    <td>{{ attendance.location }}</td>
+                    <td>
+                        <span
+                            class="badge {% if attendance.status == 'Present' %}badge-present{% else %}badge-absent{% endif %}">
+                            {{ attendance.status }}
+                        </span>
+
+                    </td>
+                    <td>
+
+                        <button type="button" class="" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal{{ emp.employee_id }}" data-bs-whatever="@mdo">
+                            <i class="fi fi-rr-edit text-warning fs-6"></i>
+                        </button>
+
+                    </td>
+                    {% else %}
+                    <td>
+                        --
+                    </td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td><span class="badge badge-absent">Absent</span></td>
+                    <td>
+
+                        <button type="button" class="" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal{{ emp.employee_id }}" data-bs-whatever="@mdo">
+                            <i class="fi fi-rr-edit text-warning fs-6"></i>
+                        </button>
+
+                    </td>
+                    {% endif %}
+
+                </tr>
+                {% endwith %}
+                {% endfor %}
+            </tbody>
+
+
+        </table>
+    </div>
+
+    <!-- Export Section
+        <div class="mt-4">
+            <button class="btn btn-success">Export to Excel</button>
+            <button class="btn btn-danger">Export to PDF</button>
+        </div> -->
+
+
+
+</div>
+
+
+
+<!-- Update Popup -->
+{% for emp in employees %}
+{% with attendance_records|get_item:emp.employee_id as attendance %}
+<!-- Unique Modal for Each Employee -->
+<div class="modal fade" id="exampleModal{{ emp.employee_id }}" tabindex="-1"
+    aria-labelledby="exampleModalLabel{{ emp.employee_id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel{{ emp.employee_id }}">Update Attendance - {{ emp.name }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'real_time_attendance' %}">
+                    {% csrf_token %}
+
+                    <!-- Hidden Field to Pass Attendance ID -->
+                    <input type="hidden" name="attendance_id" value="{{ attendance.id }}">
+
+                    <div class="mb-3">
+                        <label for="checkin-time-{{ emp.employee_id }}" class="col-form-label">Check-In</label>
+                        <input type="time" class="form-control" id="checkin-time-{{ emp.employee_id }}" name="time_in"
+                            value="{{ attendance.time_in|time:'H:i' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="checkout-time-{{ emp.employee_id }}" class="col-form-label">Check-Out</label>
+                        <input type="time" class="form-control" id="checkout-time-{{ emp.employee_id }}" name="time_out"
+                            value="{{ attendance.time_out|time:'H:i' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="attendance-status-{{ emp.employee_id }}" class="col-form-label">Status</label>
+                        <select class="form-control" id="attendance-status-{{ emp.employee_id }}" name="status">
+                            <option value="Present" {% if attendance.status == "Present" %} selected {% endif %}>Present
+                            </option>
+                            <option value="Absent" {% if attendance.status == "Absent" %} selected {% endif %}>Absent
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endwith %}
+{% endfor %}
+
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to log out?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="confirmLogout" class="btn btn-danger">Logout</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+</div>
+
+
+
+
+
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script>
+    // static/js/custom.js
+    document.getElementById('dateFilter').addEventListener('change', function () {
+        window.location.href = '?date=' + this.value;
+    });
+
+</script>
+
+{% endblock %}

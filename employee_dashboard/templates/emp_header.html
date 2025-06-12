@@ -1,0 +1,45 @@
+<nav class="navbar">
+    <div class="navbar-left">
+        <span class="menu-toggle material-icons" onclick="toggleSidebar()">menu</span>
+        <div class="logo">
+            <a href="{% url 'emp_dashboard' %}">
+                <img src="/static/img/main-logo.png" class="logo" style="height: 3rem;width: 100%;" />
+            </a>
+        </div>
+
+
+    </div>
+    <div class="navbar-right">
+        <!-- <div class="login-time">
+                <span>Log In </span><br>
+                <strong>09:02:34 am</strong>
+            </div> -->
+        <!-- <a class="nav-btn" href="#">
+                <span class="material-icons">email</span>
+            </a> -->
+
+        <!-- <a class="nav-btn" href="#">
+                <i class="fi fi-tr-bell"></i>
+            </a> -->
+        <a href="{% url 'logout' %}" class="nav-btn text-light">
+            <i class="fi fi-tr-sign-out-alt"></i>
+        </a>
+        <button class="theme-toggler " id="darkModeToggle" class="nav-btn" onclick="toggleDarkMode()">
+
+            <i class="fi fi-tr-moon"></i>
+        </button>
+        <a class="nav-btn text-light" href="#">
+            <i class="fi fi-tr-api"></i>
+        </a>
+
+
+        <div class="profile">
+            <a href="#" class="d-flex" title="Profile" data-bs-toggle="modal" data-bs-target="#employeeModal">
+                <img src="{{ employee.employee_images.url}}" alt="Profile Picture" class="profile-img">
+                <span class="user-id">{{ employee.employee_id }} <br>
+                    <span class="username">{{ employee.name }}</span>
+                    <i class="fi fi-tr-caret-right"></i>
+            </a>
+        </div>
+    </div>
+</nav>

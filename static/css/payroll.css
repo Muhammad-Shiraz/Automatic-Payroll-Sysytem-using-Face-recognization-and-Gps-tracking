@@ -1,0 +1,94 @@
+body {
+    background-color: #f5f7fb;
+    font-family: "Poppins", sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+p {
+    font-size: 12px;
+
+}
+
+
+
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.card-body .btn {
+    border-radius: 4px;
+    font-size: 10px;
+    padding: 4px;
+    /* background: #4cc3c8; */
+    background-color: transparent;
+    color: #7a888a;
+    border-color: #4cc3c8;
+}
+
+.daterangepicker {
+    z-index: 1050 !important;
+    /* Ensures dropdown is above everything */
+}
+
+.no-border-left {
+    border-left: none !important;
+}
+
+
+.icon-border {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 5px 9px;
+}
+
+i {
+
+    color: #0a53c0;
+}
+
+.card-body {
+    text-align: start;
+}
+
+.card-text {
+    padding: 15px 23px;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+
+.hidden-row {
+    display: none;
+}
+
+
+
+
+@media screen and (max-width:765px) {
+    .chart-card {
+        width: 100%;
+    }
+    #lineChart>div {
+        width: 100% !important;
+    
+    }
+    .header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+    .header-cards{
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}

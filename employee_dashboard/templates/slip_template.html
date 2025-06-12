@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: sans-serif; padding: 30px; }
+        .title { text-align: center; margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h2 class="title">Payroll Slip - {{ payroll.month|date:"F Y" }}</h2>
+    <p><strong>Employee:</strong> {{ employee.name }} - {{ employee.employee_id }}</p>
+    <p><strong>Email:</strong> {{ employee.email }}</p>
+
+    <table>
+        <tr><th>Basic Salary</th><td>Rs{{ payroll.basic_salary }}</td></tr>
+        <tr><th>Bonus</th><td>Rs{{ payroll.bonus }}</td></tr>
+        <tr><th>Performance Bonus</th><td>Rs{{ payroll.performance_bonus }}</td></tr>
+        <tr><th>Total Salary</th><td>Rs{{ payroll.total_salary }}</td></tr>
+        <tr><th>Status</th><td>{{ payroll.status }}</td></tr>
+    </table>
+</body>
+</html>

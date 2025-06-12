@@ -1,0 +1,14 @@
+{% extends "Base.html" %}
+
+{% block content %}
+    <h2>Assign Overtime for Employee: {{ leave.employee.name }} ({{ leave.leave_type.name }})</h2>
+    <h4>Leave Duration: {{ leave.start_date }} to {{ leave.end_date }}</h4>
+    <h4>Department: {{ leave.employee.department.name }}</h4>
+    
+    <!-- Overtime assignment form -->
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Send Overtime Notifications</button>
+    </form>
+{% endblock %}
