@@ -290,14 +290,6 @@ def all_manual_requests(request):
     all_requests = ManualAttendanceRequest.objects.select_related('employee').all().order_by('-submitted_at')
     return render(request, 'all_manual_requests.html', {'all_requests': all_requests})
 
-
-
-
-
-
-
-
-
 from django.shortcuts import render, redirect
 from .models import AttendanceSettings
 from payroll.utils import get_daily_payroll_data 
