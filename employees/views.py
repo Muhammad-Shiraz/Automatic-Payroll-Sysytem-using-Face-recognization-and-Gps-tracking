@@ -11,7 +11,11 @@ from django.conf import settings
 import face_recognition
 import os
 import requests
-
+from django.http import JsonResponse
+from django.db.models.functions import TruncMonth
+from django.db.models import Count
+from .models import Employee_data
+import calendar
 
 @login_required
 def employee_profile(request, employee_id):
@@ -332,18 +336,6 @@ def update_employee_status(request, emp_id):
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
-
-
-
-
-
-
-
-from django.http import JsonResponse
-from django.db.models.functions import TruncMonth
-from django.db.models import Count
-from .models import Employee_data
-import calendar
 
 def employee_monthly_joining(request):
     data = (

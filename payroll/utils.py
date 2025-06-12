@@ -1,12 +1,9 @@
 # === ✅ Create this in payroll/utils.py ===
-
 from datetime import datetime, date
 from decimal import Decimal
 from employees.models import Employee_data
 from attendance.models import Attendance, AttendanceSettings
 from payroll.models import Payroll, DailyPayroll, PayrollSettings
-
-from django.db.models import Sum
 
 def get_daily_payroll_data():
     employees = Employee_data.objects.all()
@@ -44,15 +41,15 @@ def get_daily_payroll_data():
         regular_pay = hourly_rate * regular_hours
         overtime_bonus = hourly_rate * total_overtime_hours * (overtime_percentage / 100)
         overtime_pay = (hourly_rate * total_overtime_hours) + overtime_bonus
-        print(overtime_pay)
-        print(overtime_bonus)
-        print(regular_hours, regular_pay, overtime_bonus,overtime_pay)
+        # print(overtime_pay)
+        # print(overtime_bonus)
+        # print(regular_hours, regular_pay, overtime_bonus,overtime_pay)
         daily_salary = regular_pay + (hourly_rate * total_overtime_hours) + overtime_bonus
-        print(daily_salary)
-        print(f"Employee: {employee.name}, Basic Salary: {basic_salary}")
-        print(f"Total Hours: {total_hours}, Overtime Hours: {total_overtime_hours}")
-        print(f"Hourly Rate: {hourly_rate}, Daily Salary: {daily_salary}")
-        print(f"Overtime Pay: {overtime_pay}, Bonus: {bonus}")
+        # print(daily_salary)
+        # print(f"Employee: {employee.name}, Basic Salary: {basic_salary}")
+        # print(f"Total Hours: {total_hours}, Overtime Hours: {total_overtime_hours}")
+        # print(f"Hourly Rate: {hourly_rate}, Daily Salary: {daily_salary}")
+        # print(f"Overtime Pay: {overtime_pay}, Bonus: {bonus}")
 
 
         DailyPayroll.objects.update_or_create(

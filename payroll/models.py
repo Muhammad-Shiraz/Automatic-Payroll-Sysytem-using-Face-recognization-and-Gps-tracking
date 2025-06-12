@@ -24,16 +24,6 @@ class Payroll(models.Model):
     class Meta:
         unique_together = ('employee', 'month')  # One payroll per employee per month
 
-    # def calculate_total_salary(self):
-    #     total_additions = sum(
-    #         c.amount for c in self.payrollcomponent_set.filter(component__is_deduction=False)
-    #     )
-    #     total_deductions = sum(
-    #         c.amount for c in self.payrollcomponent_set.filter(component__is_deduction=True)
-    #     )
-    #     return self.basic_salary + total_additions - total_deductions
-
- 
 
     def save(self, *args, **kwargs):
         # Only auto-set total_salary if it's not set manually
@@ -49,14 +39,9 @@ class Payroll(models.Model):
             self.end_date = date(year, month, last_day)
 
         super().save(*args, **kwargs)
-   
-
-   
-
 
     def __str__(self):
         return f"Payroll for {self.employee} - {self.month}"
-
 
 
 class DailyPayroll(models.Model):
@@ -68,8 +53,6 @@ class DailyPayroll(models.Model):
     overtime = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Overtime
     overtimepay = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Overtime
     
-
-
     class Meta:
         unique_together = ('employee', 'date')
 
@@ -80,10 +63,6 @@ class DailyPayroll(models.Model):
 
     def __str__(self):
         return f"Daily Payroll for {self.employee.name} on {self.date}"
-
-
-
-
 
 # models.py
 class PayrollSettings(models.Model):

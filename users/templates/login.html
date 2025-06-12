@@ -9,10 +9,8 @@
     <link rel="icon" href="{% static 'img/logo.png' %}" type="image/x-icon">
     <!-- Load Bootstrap from CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
-
     <!-- Load Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/login_style.css' %}">
-
     <title>Techzilla - Login</title>
 </head>
 
@@ -29,8 +27,6 @@
             </div>
             <div class="login-form">
                 <div>
-                    
-                    <!-- <img src="{% static 'img/logo.png' %}" alt="Login Image"> -->
                     <h2>Login</h2>
                 </div>
 
@@ -40,14 +36,6 @@
 
                 <form method="POST">
                     {% csrf_token %}
-                    <!-- <div class="group">
-                        <i class="fa-solid fa-user icon"></i>
-                        <select name="role" id="role" required>
-                            <option value="" class="text-center">--- Select Authority ---</option>
-                            <option value="HR">HR</option>
-                            <option value="Employee">Employee</option>
-                        </select>
-                    </div> -->
                     <div class="group">
                         <i class="fa fa-envelope icon"></i>
                         <input type="text" name="username" id="email" placeholder="Username" required>

@@ -105,8 +105,6 @@
                         <th class="text-light">Overall Score</th>
                         <th class="text-light">Total Task</th>
                         <th class="text-light">Grade</th>
-                        <!-- <th>Assigned Tasks</th> -->
-                        <!-- <th>Task Completion Status</th> -->
                         <th class="text-light">Action</th>
                     </tr>
                 </thead>
@@ -119,53 +117,14 @@
                         <td>{{ data.avg_feedback }}</td>
                         <td>{{ data.overall_score }}</td>
                         <td>{{ data.total_tasks }}</td>
-
                         <td>{{ data.grade }}</td>
-                        <!-- <td>
-                            <ul>
-                                {% for task in data.tasks %}
-                                <li>{{ task.task.title }}</li>
-                                {% empty %}
-                                <li>No tasks assigned</li>
-                                {% endfor %}
-                            </ul>
-                        </td> -->
                         <td>
                             <!-- Button to open task modal -->
                             <a href="{% url 'employee-task-view' data.employee.employee_id %}"
                                 class="btn btn-primary btn-sm">
                                 View Tasks
                             </a>
-
-
                         </td>
-
-                        <!-- <td>
-                            <ul>
-                                {% for task in data.tasks %}
-                                <li>
-                                    {% if task.is_completed %}
-                                    Completed on {{ task.completed_at }}
-                                    {% else %}
-                                    Due by {{ task.due_date }}
-                                    {% endif %}
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </td> -->
-                        <!-- <td>
-                          
-                            {% for task in data.tasks %}
-                                {% if not task.is_completed %}
-                                    <a href="{% url 'mark-task-completed' task.id %}" class="btn btn-success" style="font-size: 10px;padding: 0;">Mark as Completed</a>
-
-                                {% endif %}
-                                {% if task.is_completed %}
-                                    <a href="" class="btn btn-info" style="font-size: 10px;padding: 0;">Task Completed</a>
-                                {% endif %}
-                            {% endfor %}
-                        </td> -->
-
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -196,11 +155,6 @@
             </div>
         </div>
     </div>
-
-
-
-
-
 </div>
 
 <!-- Chart Script -->
@@ -292,98 +246,6 @@ document.addEventListener('DOMContentLoaded', function () {
     myChart.setOption(option);
 });
 </script>
-
-<!-- <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const chartDom = document.getElementById('performanceChart');
-    const myChart = echarts.init(chartDom);
-
-    const months = {{ kpi_months | safe }};
-    const scores = {{ kpi_scores | safe }};
-
-    const option = {
-        title: {
-            text: '📊 Monthly KPI Performance',
-            left: 'center',
-            textStyle: {
-                fontSize: 18,
-                fontWeight: 'bold'
-            }
-        },
-        tooltip: {
-            trigger: 'axis',
-            backgroundColor: '#fff',
-            borderColor: '#ccc',
-            borderWidth: 1,
-            textStyle: {
-                color: '#333'
-            }
-        },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '8%',
-            containLabel: true
-        },
-        xAxis: {
-            type: 'category',
-            data: months,
-            axisLabel: {
-                rotate: 30,
-                fontSize: 12
-            },
-            axisLine: {
-                lineStyle: {
-                    color: '#aaa'
-                }
-            },
-            splitLine: {
-                show: false  // ❌ hide vertical background lines
-            }
-        },
-        yAxis: {
-            type: 'value',
-            name: 'Score',
-            min: 0,
-            max: 100,
-            axisLine: {
-                lineStyle: {
-                    color: '#aaa'
-                }
-            },
-            splitLine: {
-                show: false  // ❌ hide horizontal background lines
-            }
-        },
-        series: [{
-            name: 'KPI Score',
-            data: scores,
-            type: 'line',
-            smooth: true,
-            symbol: 'circle',
-            symbolSize: 8,
-            lineStyle: {
-                color: '#5470C6',
-                width: 3
-            },
-            itemStyle: {
-                color: '#5470C6',
-                borderColor: '#fff',
-                borderWidth: 2
-            },
-            areaStyle: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    { offset: 0, color: 'rgba(84,112,198,0.4)' },
-                    { offset: 1, color: 'rgba(84,112,198,0.05)' }
-                ])
-            }
-        }]
-    };
-
-    myChart.setOption(option);
-});
-</script> -->
-
 
 {% endblock %}
 

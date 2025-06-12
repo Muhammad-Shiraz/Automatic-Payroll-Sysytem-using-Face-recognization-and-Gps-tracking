@@ -1,11 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404,redirect
 from django.views.decorators.csrf import csrf_exempt
-from decimal import Decimal
-from datetime import datetime, date
 from payroll.models import Payroll, DailyPayroll, PayrollSettings
 from employees.models import Employee_data
-from attendance.models import Attendance , AttendanceSettings
 from django.db.models import Sum
+from django.http import JsonResponse
 from .utils import get_daily_payroll_data
 
 def payroll_dashboard(request):
@@ -14,10 +12,6 @@ def payroll_dashboard(request):
     bonus_sum = Payroll.objects.all().aggregate(Sum('bonus'))['bonus__sum']
     overtimepay_sum = DailyPayroll.objects.all().aggregate(Sum('overtimepay')).get('overtimepay__sum', 0)
     return render(request, 'payroll.html', {'employees_pay': payroll_data, 'total_salary_sum': total_salary_sum , 'bonus_sum': bonus_sum, 'overtimepay_sum': overtimepay_sum})
-
-
-
-
 
 def employee_payroll_detail(request, employee_id):
     employee = get_object_or_404(Employee_data, employee_id=employee_id)
@@ -48,12 +42,6 @@ def employee_payroll_detail(request, employee_id):
     return render(request, 'employee_payroll.html', context)
 
 
-
-
-from django.http import JsonResponse
-from payroll.models import DailyPayroll
-from decimal import Decimal
-
 def payroll_chart_api(request):
     labels = []
     daily_salaries = []
@@ -79,12 +67,6 @@ def payroll_chart_api(request):
         'overtime_salaries': [float(val) for val in overtime_salaries],
     })
 
-
-
-
-
-
-
 @csrf_exempt
 def api_refresh_payroll_dashboard(request):
     data = get_daily_payroll_data()
@@ -95,14 +77,6 @@ def api_refresh_payroll_dashboard(request):
     })
 
 
-
-
-
-
-
-# views.py
-from django.shortcuts import render, redirect
-from .models import PayrollSettings
 
 def payroll_settings_view(request):
     payrollSettings, _ = PayrollSettings.objects.get_or_create(id=1)
@@ -115,11 +89,6 @@ def payroll_settings_view(request):
 
     return render(request, 'payroll_setting.html', {'settings': payrollSettings})
 
-
-
-
-
-
 def daily_salary_chart_api(request):
     data = (
         DailyPayroll.objects
@@ -130,10 +99,7 @@ def daily_salary_chart_api(request):
 
     dates = [entry['date'].strftime('%Y-%m-%d') for entry in data]
     salaries = [float(entry['total_salary']) for entry in data]
-
     return JsonResponse({'dates': dates, 'salaries': salaries})
-
-
 
 
 def payroll_chart_data(request):
