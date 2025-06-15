@@ -21,6 +21,10 @@ add this features in futures : 1 is add qrcode for the niqab and mask wearing wo
 
 
 
+# Dlib make error on window so Install CMake & Visual Studio Build Tools then dlib but firstly install face_recognition is face error then going to manually
+# then upgrade wheeel(setuptools wheel)
+
+
 
 
 
