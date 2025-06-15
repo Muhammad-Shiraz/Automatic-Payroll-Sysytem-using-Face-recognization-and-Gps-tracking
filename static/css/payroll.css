@@ -92,3 +92,9 @@ a {
         justify-content: center;
     }
 }
+@media screen and (max-width:581px) {
+    
+    .header-cards .card {
+        width: 100% !important;
+    }
+}

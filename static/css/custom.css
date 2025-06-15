@@ -854,6 +854,7 @@ body:not(.payroll-page) .card-body {
         float: left !important;
         bottom: 0 !important;
     }
+    
 
 
     #sidebar.active .sidebar-header h3 span {
@@ -936,6 +937,9 @@ body:not(.payroll-page) .card-body {
         box-shadow: none !important;
     }
 
+    .account-name{
+        display: none;
+    }
     .card-content.table-responsive {
         overflow-x: auto;
         /* Enable horizontal scrolling */
@@ -977,14 +981,6 @@ body:not(.payroll-page) .card-body {
 
 }
 
-/*===============small-screen overlay sidebar design media queries==============*/
-
-
-
-
-/* ---------------------------------------------------
-    MEDIAQUERIES
------------------------------------------------------ */
 
 
 

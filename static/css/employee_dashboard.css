@@ -70,7 +70,7 @@ thead tr th {
 }
 
 span {
-    font-size: 12px;
+    font-size: 17px;
 }
 
 #canvas,
@@ -86,9 +86,10 @@ span {
 
 .sidebar {
     position: fixed;
-    width: 300px;
+    top: 0;
+    width: 260px;
     height: 100%;
-    background: var(--clr-info-light);
+    background: #19323c;
     color: var(--clr-txt-light);
     padding: 20px;
     transition: left 0.3s ease-in-out;
@@ -103,7 +104,10 @@ span {
 .sidebar a {
     color: white;
     text-decoration: none;
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    /* display: block; */
     padding: 10px;
 }
 
@@ -130,6 +134,9 @@ span {
     border-radius: var(--card-border-radius);
 
 }
+.sidebar-list div{
+    margin: 20px 0;
+}
 
 .sidebar-list:hover {
     box-shadow: none;
@@ -146,7 +153,7 @@ h6 {
     padding-bottom: 10px;
     margin: 15px;
     text-align: center;
-    border-bottom: 1px solid #555;
+    /* border-bottom: 1px solid #555; */
 }
 
 .sidebar-list h6 {
@@ -193,10 +200,8 @@ h6 {
 
 /* Navbar */
 .navbar {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    padding: 10px 5px !important;
     color: white;
     background: linear-gradient(135deg, #19323C, #1F4E5F);
 }
@@ -204,12 +209,13 @@ h6 {
 .navbar-left {
     display: flex;
     align-items: center;
-    margin-left: 20px;
+    justify-content: space-between;
+    /* margin-left: 20px; */
 }
 
-.navbar-left .logo {
+/* .navbar-left .logo {
     padding-right: 50px;
-}
+} */
 
 
 .navbar-left .nav-btn {
@@ -283,18 +289,19 @@ h6 {
 .profile {
     display: flex;
     align-items: center;
-    margin-right: 20px;
+    margin:0 15px;
 }
 
 .profile a {
     color: white;
+    align-items: center;
 }
 
 .profile-img {
     width: 40px;
     height: 40px;
     border-radius: 20%;
-    margin: 0px 15px;
+    margin: 0px 6px;
 }
 
 .profile .user-id {
@@ -583,7 +590,10 @@ main {
 
 /* Responsive Styles */
 @media (max-width: 992px) {
+    .dashboard-header h2,h3{
+        font-size: 20px !important;
 
+    }
     .side {
         display: none;
     }
@@ -592,9 +602,9 @@ main {
         text-align: center;
     }
 
-    .navbar-left .logo {
+    /* .navbar-left .logo {
         display: none;
-    }
+    } */
 
     .navbar-left .nav-btn {
         padding: 0px;
@@ -609,10 +619,12 @@ main {
         margin-right: 10px !important;
     }
 
-    .navbar-right .nav-btn {
+    /* .navbar-right .nav-btn {
         display: none;
+    } */
+    .profile {
+        margin-right: 10px;
     }
-
     .profile .user-id {
         /* display: none; */
         font-size: 13px;
@@ -623,16 +635,18 @@ main {
     }
 
     .profile-img {
-        width: 35px;
-        height: 35px;
+        width: 30px;
+        height: 30px;
+        margin: 0px 5px;
     }
+
 
     .login-time {
         display: none;
     }
 
     .dashboard-header p {
-        font-size: 11px;
+        font-size: 11px !important;
     }
 
     .DandT h3 {
