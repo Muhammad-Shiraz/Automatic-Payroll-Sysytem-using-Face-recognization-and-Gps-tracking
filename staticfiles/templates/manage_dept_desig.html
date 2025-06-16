@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+<style>
+    .active,.nav-link:hover{
+        color: #4cc3c8 !important;
+    }
+    .nav-link {
+        color: black;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% load static %}
+<div class="container mt-2">
+    <h5 class="text-center mb-3">Department & Designation Management</h5>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="dept-tab" data-bs-toggle="tab" data-bs-target="#dept"
+                type="button">Departments</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="desig-tab" data-bs-toggle="tab" data-bs-target="#desig"
+                type="button">Designations</button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- Departments -->
+        <div class="tab-pane fade show active" id="dept">
+            <form method="post">
+                {% csrf_token %}
+                {{ dept_form.name.label_tag }} {{ dept_form.name }}
+                <button type="submit" name="dept-submit" class="btn border-none text-light" style="background-color: #4cc3c8;">Add Department</button>
+            </form>
+            <hr>
+            <h5 class="mt-4">All Departments</h5>
+            <table class="table table-hover align-middle table-striped" style="font-size: 12px;">
+                <thead class="table-light">
+                    <tr>
+                        <th class="text-light">#</th>
+                        <th class="text-light">Name</th>
+                        <th class="text-light">Employees</th>
+                        <th class="text-light">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dept in departments %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ dept.obj.name }}</td>
+                        <td>{{ dept.employee_count }}</td>
+                        <td>
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete-dept-id" value="{{ dept.obj.id }}">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+        <!-- Designations -->
+        <div class="tab-pane fade" id="desig">
+            <form method="post">
+                {% csrf_token %}
+                {{ desig_form.name.label_tag }} {{ desig_form.name }}
+                <button type="submit" name="desig-submit" class="btn border-none text-light" style="background-color: #4cc3c8;">Add Designation</button>
+            </form>
+            <hr>
+            <h5 class="mt-4">All Designations</h5>
+            <table class="table table-hover align-middle table-striped" style="font-size: 12px;">
+                <thead class="table-light">
+                    <tr>
+                        <th class="text-light">#</th>
+                        <th class="text-light">Name</th>
+                        <th class="text-light">Employees</th>
+                        <th class="text-light">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for desig in designations %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ desig.obj.name }}</td>
+                        <td>{{ desig.employee_count }}</td>
+                        <td>
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete-desig-id" value="{{ desig.obj.id }}">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

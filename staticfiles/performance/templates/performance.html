@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .card-box {
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .table thead th {
+        background-color: #f8f9fa;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- KPI Summary Cards -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-light">Attendance Rate</h5>
+                    <p class="card-text fs-5">{{ avg_attendance }}%</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-light">Task Completion</h5>
+                    <p class="card-text fs-5">{{ avg_task_completion }}%</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-light">Avg Feedback</h5>
+                    <p class="card-text fs-5">{{ avg_feedback }} ★</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-light">Avg KPI Score</h5>
+                    <p class="card-text fs-5">{{ avg_score }}</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!-- KPI Performance Chart -->
+    <div class="row align-items-start">
+        <div class="col-md-9 mb-3">
+            <div id="performanceChart" style="height: 270px;" class="p-3"></div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="d-flex flex-wrap flex-column justify-content-center gap-4 p-3">
+                <a href="{% url 'create-task' %}"
+                    class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1">
+                    <span class="material-symbols-rounded">add_task</span>
+                    Create Task
+                </a>
+                <a href="{% url 'assign-task' %}"
+                    class="btn btn-outline-success btn-sm d-flex align-items-center gap-1">
+                    <span class="material-symbols-rounded">assignment_ind</span>
+                    Assign Task
+                </a>
+
+                <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
+                    data-bs-toggle="modal" data-bs-target="#bonusRuleModal">
+                    <span class="material-symbols-rounded">settings</span>
+                    Bonus Rule
+                </button>
+
+                <a href="{% url 'generate-team-performance' %}"
+                    class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                    <span class="material-symbols-rounded">groups</span>
+                    Dept. Performance
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Performance Table -->
+    <div class="row mt-2">
+        <div class="col-md-12">
+            <h4>Monthly KPI Table</h4>
+            <table class="table table-hover align-middle table-striped" style="font-size: 12px;">
+                <thead>
+                    <tr>
+                        <th class="text-light">Employee</th>
+                        <th class="text-light">Attendance Rate</th>
+                        <th class="text-light">Task Completion</th>
+                        <th class="text-light">Average Feedback</th>
+                        <th class="text-light">Overall Score</th>
+                        <th class="text-light">Total Task</th>
+                        <th class="text-light">Grade</th>
+                        <th class="text-light">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in performance_data %}
+                    <tr>
+                        <td>{{ data.employee.name }}</td>
+                        <td>{{ data.attendance_rate }}%</td>
+                        <td>{{ data.task_completion }}%</td>
+                        <td>{{ data.avg_feedback }}</td>
+                        <td>{{ data.overall_score }}</td>
+                        <td>{{ data.total_tasks }}</td>
+                        <td>{{ data.grade }}</td>
+                        <td>
+                            <!-- Button to open task modal -->
+                            <a href="{% url 'employee-task-view' data.employee.employee_id %}"
+                                class="btn btn-primary btn-sm">
+                                View Tasks
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="bonusRuleModal" tabindex="-1" aria-labelledby="bonusRuleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="bonusRuleForm" method="post" action="{% url 'performance_bonus_settings' %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bonusRuleModalLabel">Edit Performance Bonus Rule</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        {{ form.as_p }}
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart Script -->
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const chartDom = document.getElementById('performanceChart');
+    const myChart = echarts.init(chartDom);
+
+    const months = {{ kpi_months | safe }};
+    const scores = {{ kpi_scores | safe }};
+
+    const option = {
+        title: {
+            text: '📊 Monthly KPI Performance',
+            left: 'center',
+            textStyle: {
+                fontSize: 18,
+                fontWeight: 'bold'
+            }
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            },
+            backgroundColor: '#fff',
+            borderColor: '#ccc',
+            borderWidth: 1,
+            textStyle: {
+                color: '#333'
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '8%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            data: months,
+            axisLabel: {
+                rotate: 30,
+                fontSize: 12
+            },
+            axisLine: {
+                lineStyle: {
+                    color: '#aaa'
+                }
+            },
+            splitLine: {
+                show: false
+            }
+        },
+        yAxis: {
+            type: 'value',
+            name: 'Score',
+            min: 0,
+            max: 100,
+            axisLine: {
+                lineStyle: {
+                    color: '#aaa'
+                }
+            },
+            splitLine: {
+                show: false
+            }
+        },
+        series: [{
+            name: 'KPI Score',
+            type: 'bar',
+            data: scores,
+            barWidth: '50%',
+            itemStyle: {
+                color: '#73C0DE',
+                borderRadius: [4, 4, 0, 0],
+                shadowColor: 'rgba(0, 0, 0, 0.1)',
+                shadowBlur: 4
+            },
+            emphasis: {
+                itemStyle: {
+                    color: '#3BA272'
+                }
+            }
+        }]
+    };
+
+    myChart.setOption(option);
+});
+</script>
+
+{% endblock %}
+
+{% endblock %}

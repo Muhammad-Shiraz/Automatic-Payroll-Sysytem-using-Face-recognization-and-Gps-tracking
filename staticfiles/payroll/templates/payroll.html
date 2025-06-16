@@ -1,0 +1,181 @@
+{% extends "Base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/payroll.css' %}">
+{% endblock %}
+
+{% block body_class %}payroll-page{% endblock %}
+{% block content %}
+
+<!-- MAIN CONTAINER -->
+<div class="container-fluid my-1">
+    <!-- Title & Date Range -->
+    <div class="d-flex justify-content-between align-items-center container-fluid ">
+        <div class="d-flex align-items-center gap-2 py-2">
+            <i class="fa-solid fa-wallet icon-border" style="padding: 10px 14px;"></i>
+            <h1 class="h3 fw-medium m-0">Payroll</h1>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <div class="rounded-2 text-nowrap bg-white" style="border: 1px solid #dee2e6; padding:0 12px;">
+                <a href="{% url 'payroll_settings'  %}"><i class="fa-solid fa-gear"></i></a>
+            </div>
+
+            <div class="input-group bg-white">
+                <!-- Icon: Always visible -->
+                <label for="dateRange" class="input-group-text bg-transparent rounded-2 " style="cursor: pointer;">
+                    <i class="fa-regular fa-calendar"></i>
+                </label>
+
+                <!-- Input: Hidden on small screens, visible on md and up -->
+                <input type="text" id="dateRange" name="dateRange"
+                    class="form-control border-start-0 p-0 d-none d-md-block"
+                    style="font-size: 12px;" />
+            </div>
+
+
+            <button class="btn btn-primary d-flex align-items-center"
+                style="background: #4cc3c8;border-color: #4cc3c8;font-size: 12px;">
+                <i class="fa-solid fa-arrow-up-from-bracket text-white"></i></i>
+            </button>
+        </div>
+
+    </div>
+    <!-- PAYROLL HEADER & SUMMARY CARDS -->
+    <div class="d-flex container-fluid header">
+        <div class="d-flex flex-column gap-2 col-md-4 pe-2 header-cards">
+            <!-- Summary Cards -->
+
+            <div class="card text-center">
+                <div class="card-body">
+                    <span>
+                        <i class="fa-solid fa-dollar-sign icon-border"></i>
+                        <h6 class="card-title d-inline ms-3">Monthly Payroll</h6>
+                    </span>
+                    <p class="card-text fs-4 fw-medium">
+                        Rs.{{ total_salary_sum|floatformat:2 }}
+                        <!-- <span class="text-secondary">.00</span> -->
+                        <span style="font-size: 10px;border-radius: 20px;background-color:#cbfbdb;padding: 5px;">
+                            +5.3%
+                        </span>
+                    </p>
+
+                </div>
+            </div>
+
+            <div class="card text-center">
+                <div class="card-body">
+                    <span>
+                        <i class="fa-regular fa-clock icon-border"></i>
+                        <h6 class="card-title d-inline ms-3">Overtime</h6>
+                    </span>
+                    <p class="card-text fs-4 fw-medium">Rs.{{ overtimepay_sum|floatformat:2 }}<span
+                            class="text-secondary">.00</span> <span
+                            style="font-size: 10px;border-radius: 20px;background-color: #cbfbdb;padding: 5px;">+12.2%</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="card text-center">
+                <div class="card-body">
+                    <span>
+                        <i class="fa-solid fa-wand-sparkles icon-border"></i>
+                        <h6 class="card-title d-inline ms-3">
+                            Bonuses &amp; Incentives
+                        </h6>
+                    </span>
+                    <p class="card-text fs-4 fw-medium">Rs.{{ bonus_sum|floatformat:2 }}<span
+                            class="text-secondary">.00</span> <span
+                            style="font-size: 10px;border-radius: 20px;background-color: #facccc;padding: 5px;">+12.2%</span>
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- CHART AND BANNER -->
+
+        <div class="card col-md-8 chart-card">
+
+            <div class="card-body">
+                <div id="lineChart" style="width: 100%; height: 340px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EMPLOYEE TABLE -->
+    <div class="container-fluid mt-2">
+
+        <div class="card">
+            <div class="card-body">
+                <div class="d-block">
+
+                    <div class="float-start">
+                        <i class="fa-regular fa-user icon-border"></i>
+                        <h6 class="h6 fw-medium mb-3 ms-2 d-inline">Employee</h6>
+                    </div>
+                    <div class="float-end d-flex gap-1">
+
+                        <div class="rounded-2 text-nowrap bg-white"
+                            style="border: 1px solid #dee2e6; padding: 4px 10px;font-size: 12px;">
+                            <a href="#"><i class="fa-solid fa-filter"></i> Filter</a>
+                        </div>
+
+                        <div class="position-relative">
+                            <i
+                                class="fa-solid fa-magnifying-glass position-absolute start-0 top-50 translate-middle-y ms-3 "></i>
+                            <input type="search" class="form-control ps-5 rounded-1"
+                                style="border: 1px solid #dee2e6;font-size: 12px;" placeholder="Search employee">
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle table-striped" style="font-size: 12px;">
+                        <thead class="">
+                            <tr>
+                                <th class="text-light">Employee id</th>
+                                <th class="text-light">Name</th>
+                                <th class="text-light">Department</th>
+                                <th class="text-light">Base Salary</th>
+                                <th class="text-light">Hourly Rate</th>
+                                <th class="text-light">Total Time</th>
+                                <th class="text-light">Total pay</th>
+                                <th class="text-light">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for emp in employees_pay %}
+                            <tr>
+                                <td>{{emp.employee_id}}</td>
+                                <td>{{emp.name}}</td>
+                                <td>{{emp.department}}</td>
+                                <td>{{emp.basic_salary}}</td>
+                                <td>{{emp.hourly_rate}}</td>
+                                <td>{{emp.hours_worked}}</td>
+                                <td>{{emp.total_pay}}</td>
+                                <td>{{emp.status}}</td>
+                                <td>
+                                    <a href="{% url 'employee_payroll_detail' emp.employee_id %}">
+                                        <i class="fa-regular fa-eye"></i>
+
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}
