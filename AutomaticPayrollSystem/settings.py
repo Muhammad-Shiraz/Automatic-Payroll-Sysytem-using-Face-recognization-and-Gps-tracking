@@ -60,7 +60,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'DjangoWeb.urls'
+ROOT_URLCONF = 'AutomaticPayrollSystem.urls'
 
 TEMPLATES = [
     {
