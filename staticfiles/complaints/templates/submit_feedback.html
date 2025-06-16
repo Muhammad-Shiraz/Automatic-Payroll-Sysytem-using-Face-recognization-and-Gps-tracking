@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6"> <!-- Adjust width as needed -->
+            <div class="p-4 shadow-sm rounded">
+                <h5 class="text-center mb-4">Submit HR Feedbacks</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="employee">Employee:</label>
+                        <select name="employee" id="employee" required>
+                            {% for emp in employees %}
+                            <option value="{{ emp.employee_id }}">{{ emp.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rating">Rating (1-5):</label>
+                        <input type="number" id="rating" name="rating" min="1" max="5" value="3" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comments">Comments:</label><br>
+                        <textarea id="comments" name="comments" rows="4" cols="50"></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+{% endblock %}

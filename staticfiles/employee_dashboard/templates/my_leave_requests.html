@@ -1,0 +1,68 @@
+{% extends "emp_base.html" %}
+{% load static %}
+
+{% block content %}
+<main class="col-md-8 col-sm-12 mx-auto mt-2">
+    <div class="mt-3">
+        <h5 class="mb-0">My Leave Requests</h5>
+    </div>
+    <div class="shadow rounded-4 border-0 mt-3">
+        {% if leaves %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle table-striped" style="font-size: 12px;">
+                <thead class="table-primary">
+                    <tr>
+                        <th scope="col" class="text-light">Type</th>
+                        <th scope="col" class="text-light">From - To</th>
+                        <th scope="col" class="text-light">Status</th>
+                        <th scope="col" class="text-light">Reviewed On</th>
+                        <th scope="col" class="text-light">Assigned Employee</th>
+                        <th scope="col" class="text-light">Overtime Invite</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for leave in leaves %}
+                    <tr>
+                        <td>{{ leave.leave_type.name }}</td>
+                        <td>{{ leave.from_date }} <br>→ {{ leave.to_date }}</td>
+                        <td>
+                            {% if leave.status == 'Pending' %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                            {% elif leave.status == 'Approved' %}
+                            <span class="badge bg-success">Approved</span>
+                            {% elif leave.status == 'Rejected' %}
+                            <span class="badge bg-danger">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if leave.reviewed_on %}
+                            {{ leave.reviewed_on|date:"Y-m-d H:i" }}
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ leave.assigned_employee|default:"-" }}
+                        </td>
+                        <td>
+                            {% if leave.overtime_invites %}
+                            {% for invite in leave.overtime_invites %}
+                            <span class="badge bg-info text-dark">{{ invite.employee }}</span><br>
+                            {% endfor %}
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            You have not submitted any leave requests yet.
+        </div>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,234 @@
+{% extends "Base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="main-content">
+    <!-- Summary Cards -->
+    <div class="row mb-2">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Leaves</h5>
+                    <p class="card-text fs-5">{{ total_leaves }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Approved</h5>
+                    <p class="card-text fs-5">{{ total_approved }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Assigned Employees</h5>
+                    <p class="card-text fs-5">{{ total_assigned }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Recent Leave Requests Table -->
+    <div class="row g-4 mb-2">
+        <div class="col-lg-12">
+            <h5 class="">Recent Leave Requests</h5>
+            <div class="table-responsive mt-3">
+                <table class="table table-hover align-middle table-striped" style="font-size: 12px;">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-light">Employee</th>
+                            <th class="text-light">Type</th>
+                            <th class="text-light">Dates</th>
+                            <th class="text-light">Status</th>
+                            <th class="text-light">Assigned</th>
+                            <th class="text-light">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for leave in recent_leaves %}
+                        <tr>
+                            <td>{{ leave.employee.name }}</td>
+                            <td>{{ leave.leave_type.name }}</td>
+                            <td>{{ leave.start_date }} - {{ leave.end_date }}</td>
+                            <td>
+                                <span class="badge bg-{{ leave.status|lower }}">{{ leave.status }}</span>
+                            </td>
+                            <td>
+                                {% if leave.assigned_employee %}
+                                <span class="text-success">{{ leave.assigned_employee.name }}</span>
+                                {% else %}
+                                <span class="text-muted">Not assigned</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if leave.status == "Pending" %}
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#approveModal{{ leave.id }}">Approve</button>
+                                {% endif %}
+                                {% if leave.status == "Approved" and not leave.assigned_employee %}
+                                <button class="btn btn-sm btn-success" data-bs-toggle="modal"
+                                    data-bs-target="#assignModal{{ leave.id }}">Assign</button>
+                                <a href="{% url 'assign_overtime' leave.id %}" class="btn btn-sm btn-outline-info">Send
+                                    Email</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">No recent requests.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Approve Leave Modals -->
+    {% for leave in recent_leaves %}
+    <div class="modal fade" id="approveModal{{ leave.id }}" tabindex="-1"
+        aria-labelledby="approveModalLabel{{ leave.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" action="{% url 'approve_leave' leave.id %}">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Approve Leave</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Approve leave for <strong>{{ leave.employee.name }}</strong> ({{ leave.leave_type.name
+                            }})
+                            from {{ leave.start_date }} to {{ leave.end_date }}?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Approve</button>
+
+                        <!-- Trigger for Reject Modal -->
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#rejectModal{{ leave.id }}">Reject</button>
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reject Modal -->
+    <div class="modal fade" id="rejectModal{{ leave.id }}" tabindex="-1"
+        aria-labelledby="rejectModalLabel{{ leave.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" action="{% url 'reject_leave' leave.id %}">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Reject Leave</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to reject leave for <strong>{{ leave.employee.name }}</strong>?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">Reject</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+
+
+    <!-- Assign Employee Modals -->
+    {% for leave in recent_leaves %}
+    {% if leave.status == 'Approved' and not leave.assigned_employee %}
+    <div class="modal fade" id="assignModal{{ leave.id }}" tabindex="-1"
+        aria-labelledby="assignModalLabel{{ leave.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" action="{% url 'assign_employee' leave.id %}">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Assign Employee for {{ leave.employee.name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% if leave.invited_employees_list %}
+                        {% for invite in leave.invited_employees_list %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="assigned_employee_id"
+                                value="{{ invite.employee.employee_id }}" id="emp{{ invite.employee.employee_id }}"
+                                required>
+                            <label class="form-check-label" for="emp{{ invite.employee.employee_id }}">
+                                {{ invite.employee.name }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <p class="text-muted">No invited employees found.</p>
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Assign</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+
+    <!-- Full Leave Requests Table -->
+    <div class="mt-2 border-0">
+        <h5 class="">All Leave Requests</h5>
+        <div class="table-responsive mt-3">
+            <table class="table table-hover align-middle table-striped" style="font-size: 12px;">
+                <thead class="table-light">
+                    <tr>
+                        <th class="text-light">Employee</th>
+                        <th class="text-light">Type</th>
+                        <th class="text-light">Dates</th>
+                        <th class="text-light">Status</th>
+                        <th class="text-light">Reason</th>
+                        <th class="text-light">Assigned</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for leave in leaverequest %}
+                    <tr>
+                        <td>{{ leave.employee.name }}</td>
+                        <td>{{ leave.leave_type.name }}</td>
+                        <td>{{ leave.start_date }} - {{ leave.end_date }}</td>
+                        <td>
+                            <span class="">{{ leave.status }}</span>
+                        </td>
+                        <td>{{ leave.leave_type }}</td>
+                        <td>
+                            {% if leave.assigned_employee %}
+                            <span class="text-success">{{ leave.assigned_employee.name }}</span>
+                            {% else %}
+                            <span class="text-muted">Not assigned</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No leaves found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="toast-container" id="toast-container"></div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% load static %}
+
+
+<!-- templates/includes/employee_sidebar.html -->
+<aside id="menuSidebar" class="sidebar hidden">
+    <div class="sidebar-list">
+        <!-- <h2 class="logo">TECHZILA</h2> -->
+        <a href="{% url 'emp_dashboard' %}">
+
+            <img src="{% static 'static/img/main-logo.png' %}" alt="" class="w-100 py-2">
+        </a>
+        <!-- <h6>Performance</h6> -->
+        <!-- <div class="box"> -->
+        <div>
+            <a href="{% url 'emp_performance' %}">
+                <i class="fi fi-tr-speedometer-kpi" style="font-size: 20px;"></i>
+                <span>Performance</span>
+            </a>
+        </div>
+        <div>
+            <a href="{% url 'employee_tasks' %}">
+                <i class="fi fi-tr-task-checklist" style="font-size: 20px;"></i>
+                <span>Task Completion</span>
+            </a>
+        </div>
+        <!-- </div> -->
+
+        <!-- <h6>Attendance Management</h6> -->
+        <!-- <div class="box"> -->
+        <div> <a href="{% url 'emp_attendance' %}">
+                <i class="fi fi-tr-check-in-calendar" style="font-size: 20px;"></i>
+                <span>Check-In/Out</span>
+            </a></div>
+        <div><a href="{% url 'attendance_analytics' %}">
+                <i class="fi fi-tr-stats" style="font-size: 20px;"></i>
+                <span>Analytics</span>
+            </a></div>
+        <!-- </div> -->
+
+        <!-- <h6>Payroll</h6> -->
+        <!-- <div class="box"> -->
+        <div><a href="{% url 'employee_payroll' %}"">
+                                    <i class=" fi fi-tr-sack-dollar" style="font-size: 20px;"></i>
+                <span>Payroll Overview</span>
+            </a></div>
+        <div><a href="{% url 'payroll_slip' %}">
+                <i class="fi fi-tr-point-of-sale-bill" style="font-size: 20px;"></i>
+                <span>Payslips</span>
+            </a></div>
+        <!-- </div> -->
+
+        <!-- <h6>Leave & Timesheet</h6> -->
+        <!-- <div class="box"> -->
+        <div> <a href="{% url 'emp_leave_request' %}"">
+                                    <i class=" fi fi-tr-house-leave" style="font-size: 20px;"></i>
+                <span>Leave Request</span>
+            </a></div>
+        <div> <a href="{% url 'my_leave_requests' %}">
+                <i class="fi fi-tr-time-past" style="font-size: 20px;"></i>
+                <span>Leave Assigned</span>
+            </a></div>
+        <!-- </div> -->
+
+        <!-- <h6>Complaint & Feedback</h6> -->
+        <!-- <div class="box"> -->
+        <div><a href="{% url 'submit_complaint' %}">
+                <i class="fi fi-tr-building-user" style="font-size: 20px;"></i>
+                <span>Complaint</span>
+            </a></div>
+        <div> <a href="{% url 'employee_feedback' %}">
+                <i class="fi fi-tr-feedback-alt" style="font-size: 20px;"></i>
+                <span>Feedback</span>
+            </a></div>
+        <!-- </div> -->
+
+        <!-- <div class="box" style="border-top: 1px solid #555;">
+            <div style="margin-top: 10px;"><a href="#"><img src="/static/img/emp_images/Setting.png" class="aside-img"><br><span>Settings</span></a></div>
+            <div><a href="#"><img src="/static/img/emp_images/Logout.png" class="aside-img"><br><span>Logout</span></a></div>
+        </div> -->
+    </div>
+</aside>

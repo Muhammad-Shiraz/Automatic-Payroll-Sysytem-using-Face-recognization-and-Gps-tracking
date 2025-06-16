@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-3">
+    <div class=" shadow-lg p-4 ">
+        <div class="text-center">
+            <!-- Employee Profile Image -->
+            <img src="{{ employee.employee_images.url }}" alt="Profile Picture" class="rounded-circle" width="150"
+                height="150">
+            <h2 class="mt-3">{{ employee.name }}</h2>
+            <p class="text-muted">{{ employee.designation.name }} - {{ employee.department.name }}</p>
+        </div>
+
+        <hr>
+
+        <div class="row profile_info">
+            <div class="col-md-6">
+                <h6><strong>Employee ID:</strong> {{ employee.employee_id }}</h6>
+                <h6><strong>Phone:</strong> {{ employee.phone_number }}</h6>
+                <h6><strong>Email:</strong> {{ employee.email }}</h6>
+                <h6><strong>Date of Birth:</strong> {{ employee.dob }}</h6>
+                <h6><strong>Gender:</strong> {{ employee.gender }}</h6>
+                <h6><strong>Martial Status:</strong> {{ employee.marital_status }}</h6>
+                <h6><strong>Street:</strong> {{ employee.street }}</h6>
+                <h6><strong>City:</strong> {{ employee.city }}</h6>
+                <h6><strong>State:</strong> {{ employee.state }}</h6>
+                <h6><strong>Postal Code:</strong> {{ employee.postalCode }}</h6>
+                <h6><strong>Country:</strong> {{ employee.country }}</h6>
+            </div>
+            <div class="col-md-6">
+                <h6><strong>Shift:</strong> {{ employee.shift }}</h6>
+                <h6><strong>Salary:</strong> PKR {{ employee.salary }}</h6>
+                <h6><strong>Employment Type:</strong> {{ employee.employmentType }}</h6>
+                <h6><strong>Joining Date:</strong> {{ employee.joining_date }}</h6>
+                <h6><strong>Bank Account:</strong> {{ employee.bankAccount }}</h6>
+                <h6><strong>Bank Name:</strong> {{ employee.bankName }}</h6>
+                <h6><strong>Emergency Contact No:</strong> {{ employee.emergencyContactName }}</h6>
+                <h6><strong>Emergency Contact Relationship:</strong> {{ employee.emergencyContactrelationship }}</h6>
+                <h6><strong>Emergency Contact Phone:</strong> {{ employee.emergencyContactPhone }}</h6>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'edit_employee' employee.employee_id %}" class="btn btn-warning">Edit Profile</a>
+            <a href="{% url 'employee_list' %}" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>
+
+
+
+</div>
+</div>
+
+
+{% endblock %}

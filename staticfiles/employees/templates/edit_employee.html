@@ -1,0 +1,174 @@
+{% extends "Base.html" %}
+{% block content %}
+
+<div class="container mt-3 px-5">
+    <h2 class="mb-4">Update Employee</h2>
+    <form method="POST" action="{% url 'edit_employee' employee.employee_id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Basic Details -->
+        <h4>Basic Details</h4>
+        <div>
+            <input type="file" name="employee_images" accept="image/*">
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="employeeID" value="{{ employee.employee_id }}"
+                        required readonly>
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="name" value="{{ employee.name }}" required>
+                </div>
+                <div class="mb-3">
+                    <input type="email" class="form-control" name="email" value="{{ employee.email }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" name="password"
+                        value="{{ employee.password }}" required>
+
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <input type="date" class="form-control" name="dob" value="{{ employee.dob|date:'Y-m-d' }}" required>
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control" name="phone" value="{{ employee.phone_number }}" required>
+                </div>
+                <div class="mb-3">
+                    <select class="form-select" name="gender" required>
+                        <option value="Male" {% if employee.gender == "Male" %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if employee.gender == "Female" %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if employee.gender == "Other" %}selected{% endif %}>Other</option>
+
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <select class="form-select" name="marital_status" required>
+                        <option value="Single" {% if employee.marital_status == "Single" %}selected{% endif %}>Single
+                        </option>
+                        <option value="Married" {% if employee.marital_status == "Married" %}selected{% endif %}>Married
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Address Details -->
+        <h4>Address</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="street" value="{{ employee.street }}" required>
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="city" value="{{ employee.city }}" required>
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="state" value="{{ employee.state }}" required>
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="postalCode" value="{{ employee.postalCode }}"
+                        required>
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="country" value="{{ employee.country }}" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Department & Role -->
+        <h4>Department & Role</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <select class="form-select" name="department" required>
+                        {% for department in departments %}
+                            <option value="{{ department.id }}" {% if employee.department.id == department.id %}selected{% endif %}> 
+                                {{ department.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <select class="form-select" name="designation" required>
+                        {% for designation in designations %}
+                            <option value="{{ designation.id }}"
+                             {% if employee.designation.id == designation.id %}selected{% endif %}>
+                                {{ designation.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <select class="form-select" name="shift" required>
+                        <option value="Morning" {% if employee.shift == "Morning" %}selected{% endif %}>Morning</option>
+                        <option value="Evening" {% if employee.shift == "Evening" %}selected{% endif %}>Evening</option>
+                        <option value="Night" {% if employee.shift == "Night" %}selected{% endif %}>Night</option>
+
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <select class="form-select" name="employmentType" required>
+                        <option value="Full-time" {% if employee.employmentType == "Full-time" %}selected{% endif %}>Full-time</option>
+                        <option value="Part-time" {% if employee.employmentType == "Part-time" %}selected{% endif %}>Part-time</option>
+                        <option value="Contract" {% if employee.employmentType == "Contract" %}selected{% endif %}>Contract</option>
+
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="active_status" name="active_status" value="True"
+                            {% if employee.active_status %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                    
+                </div>
+                
+                <div class="mb-3">
+                    <input type="number" class="form-control"  name="salary" value="{{ employee.salary }}"
+                        step="0.01" required>
+                </div>
+                
+                <div class="mb-3">
+                    <input type="date" class="form-control" name="joining_date"
+                        value="{{ employee.joining_date|date:'Y-m-d' }}" required>
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- Bank & Emergency Contact Details -->
+        <h4>Bank Details</h4>
+        <div class="mb-3">
+            <input type="text" class="form-control" name="bankAccount" value="{{ employee.bankAccount }}" required>
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" name="bankName" value="{{ employee.bankName }}" required>
+        </div>
+
+        <h4>Emergency Contact</h4>
+        <div class="mb-3">
+            <input type="text" class="form-control" name="emergencyContactName"
+                value="{{ employee.emergencyContactName }}" required>
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" name="emergencyContactrelationship"
+                value="{{ employee.emergencyContactrelationship }}" required>
+        </div>
+        <div class="mb-3">
+            <input type="number" class="form-control" name="emergencyContactPhone"
+                value="{{ employee.emergencyContactPhone }}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Employee</button>
+        <a href="{% url 'employee_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'emp_base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="col-md-8 col-sm-12 ">
+    <h2 class="text-center mb-4">Submit System Feedback</h2>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success text-center">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Star Rating -->
+        <div class="mb-3">
+            <select class="form-select" name="rating" id="rating" required>
+                <option value="" disabled selected>-- Select Rating --</option>
+                {% for i in "12345" %}
+                <option value="{{ i }}">⭐{{ i }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+
+        <!-- Suggestion -->
+        <div class="mb-3">
+            <input type="text" name="suggestion" class="form-control" id="suggestion" required placeholder="Suggestion">
+        </div>
+
+        <!-- Feedback -->
+        <div class="mb-3">
+            <textarea name="feedback" class="form-control" id="feedback" rows="5" required placeholder="Feedback"></textarea>
+        </div>
+
+        <button type="submit" class="btn w-100">📩 Submit Feedback</button>
+    </form>
+</main>
+{% endblock %}

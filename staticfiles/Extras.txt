@@ -1,0 +1,150 @@
+📸 Camera → 🛰 gRPC → 💻 Django Server → 🌐 WebSocket → 🖥 Frontend (Browser)
+
+
+
+problems : one problem is encoding is extra then my database rows , is_late(attendance app) apply logic in mark attednace remaining
+
+2 : is_active django ka inbulit ha aken ma nay manual use kia hoya ha to us ko django kayin built say join karna ha ta kay jab user inactive so to aus ka portal be na khulay
+
+
+
+
+add this features in futures : 1 is add qrcode for the niqab and mask wearing womens 
+                               2 is add wifi router logs that check the employee presence in the office
+                               3 
+
+
+
+
+
+
+
+
+
+# Dlib make error on window so Install CMake & Visual Studio Build Tools then dlib but firstly install face_recognition is face error then going to manually
+# then upgrade wheeel(setuptools wheel)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from flask import Flask, Response, jsonify
+from flask_cors import CORS
+import cv2
+import pickle
+import numpy as np
+import face_recognition
+from datetime import datetime
+
+app = Flask(__name__)
+CORS(app)  # Enable Cross-Origin Requests
+
+camera = None  # Camera object
+encoding_file = "employee_faces.pkl"  # Path to encoded face data
+
+# Load pre-encoded face data
+with open(encoding_file, 'rb') as file:
+    face_data = pickle.load(file)
+print(f"Loaded face data for {len(face_data)} employees.")
+
+marked_attendance = set()  # Keep track of marked attendance
+
+def mark_attendance(employee_name):
+    """Mark attendance for recognized employees."""
+    today = datetime.now().date()
+    
+    if employee_name in marked_attendance:
+        print(f"Attendance for {employee_name} already marked today.")
+        return
+    
+    # Simulate marking attendance (replace with actual DB logic)
+    print(f"✅ Attendance marked for {employee_name} at {datetime.now().time()}.")
+    marked_attendance.add(employee_name)
+
+def generate_frames():
+    """Real-time face recognition and streaming."""
+    global camera
+    process_frame = True  # Process alternate frames for efficiency
+
+    while camera and camera.isOpened():
+        success, frame = camera.read()
+        if not success:
+            break
+
+        # Resize frame for faster face processing
+        small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+        rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
+
+        if process_frame:
+            face_locations = face_recognition.face_locations(rgb_small_frame)
+            if face_locations:
+                face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+
+                for face_location, face_encoding in zip(face_locations, face_encodings):
+                    matches = face_recognition.compare_faces(list(face_data.values()), face_encoding, tolerance=0.5)
+                    name = "Unknown"
+
+                    if True in matches:
+                        distances = face_recognition.face_distance(list(face_data.values()), face_encoding)
+                        best_match_index = np.argmin(distances)
+                        if distances[best_match_index] < 0.4:  # Confidence threshold
+                            name = list(face_data.keys())[best_match_index]
+                            
+
+                    if name != "Unknown":
+                        mark_attendance(name)
+
+                    # Draw a rectangle around the face
+                    top, right, bottom, left = [v * 4 for v in face_location]
+                    cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+                    cv2.putText(frame, name, (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
+
+        process_frame = not process_frame  # Process every alternate frame
+
+        # Encode the frame in JPEG format
+        ret, buffer = cv2.imencode('.jpg', frame)
+        frame = buffer.tobytes()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+@app.route('/')
+def home():
+    return "Flask Face Recognition Streaming Server is Running"
+
+@app.route('/start_camera')
+def start_camera():
+    global camera
+    if camera is None or not camera.isOpened():
+        camera = cv2.VideoCapture(0)  # Start camera
+        if not camera.isOpened():
+            return jsonify({"error": "Failed to open camera"}), 500
+    return jsonify({"message": "Camera started"})
+
+@app.route('/stop_camera')
+def stop_camera():
+    global camera
+    if camera and camera.isOpened():
+        camera.release()
+        camera = None
+    return jsonify({"message": "Camera stopped"})
+
+@app.route('/video_feed')
+def video_feed():
+    """Stream live face recognition video."""
+    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5001, debug=True)
