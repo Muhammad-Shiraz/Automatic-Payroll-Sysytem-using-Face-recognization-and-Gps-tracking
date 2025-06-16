@@ -1,1 +1,1 @@
-web: gunicorn DjangoWeb.wsgi
+web: gunicorn AutomaticPayrollSystem.wsgi --log-file -
