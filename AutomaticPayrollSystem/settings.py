@@ -27,6 +27,7 @@ DEBUG = False
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['*']
+WSGI_APPLICATION = 'AutomaticPayrollSystem.wsgi.application'
 
 
 # Application definition
