@@ -132,38 +132,7 @@ def create_employee(request):
         # Update the face encodings pickle file
         if employee_images:
         # Path to the pickle file (store at BASE_DIR)
-            flask_app_path = os.path.join(settings.BASE_DIR, 'flask_camera_service')  
-            pickle_file_path = os.path.join(flask_app_path, 'employee_faces.pkl')
-            os.makedirs(flask_app_path, exist_ok=True)
-            # Ensure the file exists before reading
-            if not os.path.exists(pickle_file_path):
-                with open(pickle_file_path, 'wb') as file:
-                    pickle.dump({}, file)  # Create an empty dictionary
-
-            # Load existing encodings
-            with open(pickle_file_path, 'rb') as file:
-                face_data = pickle.load(file)
-
-            # Build the full path to the new employee image
-            image_path = os.path.join(settings.MEDIA_ROOT, str(employee.employee_images))
-            if os.path.exists(image_path):
-                image = face_recognition.load_image_file(image_path)
-                encodings = face_recognition.face_encodings(image)
-
-                if encodings:
-                    # Store encoding using Employee ID as the key
-                    face_data[str(employee.employee_id)] = encodings[0]
-                    print(f"✅ Updated encoding for Employee ID {employee.employee_id}")
-                else:
-                    print(f"⚠️ No face encoding found for Employee ID {employee.employee_id}")
-            else:
-                print(f"⚠️ Image file not found: {image_path}")
-
-            # Save the updated face_data back to the pickle file
-            with open(pickle_file_path, 'wb') as file:
-                pickle.dump(face_data, file)
-                # Redirect to the employee creation page after success
-                return redirect('create_employee')
+           update_face_encoding(employee)
         
 
     return render(request, 'create_employee.html', {
@@ -194,41 +163,99 @@ def notify_flask_to_reload():
     except requests.exceptions.RequestException as e:
         print(f"❌ Could not contact Flask: {e}")     
             
-def update_employee_encodings(employee):
-    """Update the face encoding when an employee's image is changed."""
-    flask_app_path = os.path.join(settings.BASE_DIR, 'flask_camera_service')
-    pickle_file_path = os.path.join(flask_app_path, 'employee_faces.pkl')
+# def update_employee_encodings(employee):
+#     """Update the face encoding when an employee's image is changed."""
+#     flask_app_path = os.path.join(settings.BASE_DIR, 'flask_camera_service')
+#     pickle_file_path = os.path.join(flask_app_path, 'employee_faces.pkl')
 
-    # Load existing encodings
-    if os.path.exists(pickle_file_path):
-        with open(pickle_file_path, 'rb') as file:
-            face_data = pickle.load(file)
-    else:
-        face_data = {}
+#     # Load existing encodings
+#     if os.path.exists(pickle_file_path):
+#         with open(pickle_file_path, 'rb') as file:
+#             face_data = pickle.load(file)
+#     else:
+#         face_data = {}
 
-    # ✅ Remove old encoding if it exists
-    if str(employee.employee_id) in face_data:
-        del face_data[str(employee.employee_id)]  # Remove old face data
-        print(f"🗑 Removed old encoding for Employee ID {employee.employee_id}")
+#     # ✅ Remove old encoding if it exists
+#     if str(employee.employee_id) in face_data:
+#         del face_data[str(employee.employee_id)]  # Remove old face data
+#         print(f"🗑 Removed old encoding for Employee ID {employee.employee_id}")
 
-    # ✅ Get new image path
+#     # ✅ Get new image path
+#     image_path = os.path.join(settings.MEDIA_ROOT, str(employee.employee_images))
+#     if os.path.exists(image_path):
+#         image = face_recognition.load_image_file(image_path)
+#         encodings = face_recognition.face_encodings(image)
+
+#         if encodings:
+#             face_data[str(employee.employee_id)] = encodings[0]  # Save new encoding
+#             print(f"✅ Updated encoding for Employee ID {employee.employee_id}")
+#         else:
+#             print(f"⚠️ No face encoding found for Employee ID {employee.employee_id}")
+
+#     # ✅ Save updated face encodings
+#     with open(pickle_file_path, 'wb') as file:
+#         pickle.dump(face_data, file)
+
+#     # ✅ Notify Flask to reload new encodings
+#     notify_flask_to_reload()
+
+
+
+def load_face_data():
+    """Load the face encodings from the pickle file safely."""
+    pickle_path = os.path.join(settings.BASE_DIR, 'flask_camera_service', 'employee_faces.pkl')
+    os.makedirs(os.path.dirname(pickle_path), exist_ok=True)
+
+    # If file doesn't exist or is empty, return an empty dict
+    if not os.path.exists(pickle_path) or os.path.getsize(pickle_path) == 0:
+        print("⚠️ Pickle file missing or empty. Initializing empty face data.")
+        return {}, pickle_path
+
+    try:
+        with open(pickle_path, 'rb') as f:
+            return pickle.load(f), pickle_path
+    except EOFError:
+        print("❌ Pickle file is corrupted or empty. Reinitializing.")
+        return {}, pickle_path
+    except Exception as e:
+        print(f"❌ Unexpected error loading face data: {e}")
+        return {}, pickle_path
+
+
+def save_face_data(face_data, pickle_path):
+    with open(pickle_path, 'wb') as f:
+        pickle.dump(face_data, f)
+
+def update_face_encoding(employee):
+    face_data, pickle_path = load_face_data()
     image_path = os.path.join(settings.MEDIA_ROOT, str(employee.employee_images))
+
+    # Remove old encoding if it exists
+    face_data.pop(str(employee.employee_id), None)
+
     if os.path.exists(image_path):
         image = face_recognition.load_image_file(image_path)
         encodings = face_recognition.face_encodings(image)
-
         if encodings:
-            face_data[str(employee.employee_id)] = encodings[0]  # Save new encoding
-            print(f"✅ Updated encoding for Employee ID {employee.employee_id}")
+            face_data[str(employee.employee_id)] = encodings[0]
+            print(f"✅ Encoding updated for Employee ID {employee.employee_id}")
         else:
-            print(f"⚠️ No face encoding found for Employee ID {employee.employee_id}")
+            print(f"⚠️ No face found in image for {employee.employee_id}")
+    else:
+        print(f"⚠️ Image not found at {image_path}")
 
-    # ✅ Save updated face encodings
-    with open(pickle_file_path, 'wb') as file:
-        pickle.dump(face_data, file)
-
-    # ✅ Notify Flask to reload new encodings
+    save_face_data(face_data, pickle_path)
     notify_flask_to_reload()
+
+def delete_face_encoding(employee_id):
+    face_data, pickle_path = load_face_data()
+    if str(employee_id) in face_data:
+        del face_data[str(employee_id)]
+        print(f"🗑 Face encoding deleted for Employee ID {employee_id}")
+        save_face_data(face_data, pickle_path)
+        notify_flask_to_reload()
+
+
 @login_required
 def edit_employee(request, employee_id):
     employee = get_object_or_404(Employee_data, employee_id=employee_id)
@@ -290,7 +317,7 @@ def edit_employee(request, employee_id):
 
             # ✅ Update face encodings properly
             if new_image:
-                update_employee_encodings(employee)
+                update_face_encoding(employee)
 
             messages.success(request, "Employee updated successfully!")
             return redirect('employee_list')
@@ -308,16 +335,25 @@ def edit_employee(request, employee_id):
 
 @login_required
 def delete_employee(request, employee_id):
-
-    """Delete an employee from the database"""
     if request.method == 'POST':
         try:
             employee = get_object_or_404(Employee_data, employee_id=employee_id)
+
+            # Delete associated encoding
+            delete_face_encoding(employee.employee_id)
+            
+
+            # Delete employee image from storage
+            if employee.employee_images:
+                image_path = os.path.join(settings.MEDIA_ROOT, str(employee.employee_images))
+                if os.path.exists(image_path):
+                    os.remove(image_path)
+                    print(f"🗑 Deleted image: {image_path}")
+
             employee.delete()
             messages.success(request, "Employee deleted successfully!")
         except Exception as e:
             messages.error(request, f"Error deleting employee: {e}")  
-
 
     return redirect('employee_list')
 

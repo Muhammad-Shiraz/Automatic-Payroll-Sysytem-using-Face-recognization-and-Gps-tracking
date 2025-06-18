@@ -12,10 +12,10 @@ app = Flask(__name__)
 CORS(app)
 
 # Load face encodings
-with open("employee_faces.pkl", "rb") as file:
-    face_data = pickle.load(file)
+# with open("employee_faces.pkl", "rb") as file:
+#     face_data = pickle.load(file)
 
-print(f"✅ Loaded {len(face_data)} employee encodings.")
+# print(f"✅ Loaded {len(face_data)} employee encodings.")
 
 # Global variables
 camera = None
@@ -35,15 +35,29 @@ def send_attendance(name):
         print("❌ Error sending attendance:", e)
 
 
-def load_encodings():
-    """ Load updated face encodings from the pickle file. """
+import os
+
+# Load face encodings safely
+face_data = {}
+
+def safe_load_encodings():
     global face_data
-    try:
-        with open("employee_faces.pkl", "rb") as file:
-            face_data = pickle.load(file)
-        print(f"✅ Reloaded {len(face_data)} employee encodings.")
-    except Exception as e:
-        print(f"❌ Error loading encodings: {e}")
+    file_path = "employee_faces.pkl"
+    if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
+        print("⚠️ No pickle file found or file is empty. Using empty face data.")
+        face_data = {}
+    else:
+        try:
+            with open(file_path, "rb") as file:
+                face_data = pickle.load(file)
+            print(f"✅ Loaded {len(face_data)} employee encodings.")
+        except Exception as e:
+            print(f"❌ Error loading pickle file: {e}")
+            face_data = {}
+
+# Call it at the beginning
+safe_load_encodings()
+
 
 
 
@@ -155,13 +169,12 @@ def generate_feed():
 def video_feed():
     return Response(generate_feed(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
+
+
 @app.route("/reload_encodings", methods=["POST"])
 def reload_encodings():
-    global face_data
     try:
-        with open("employee_faces.pkl", "rb") as file:
-            face_data = pickle.load(file)  # ✅ Reload encodings in memory
-        print("✅ Flask: Face encodings reloaded successfully!")
+        safe_load_encodings()
         return jsonify({"message": "Encodings reloaded"}), 200
     except Exception as e:
         print(f"❌ Flask: Error reloading encodings: {e}")

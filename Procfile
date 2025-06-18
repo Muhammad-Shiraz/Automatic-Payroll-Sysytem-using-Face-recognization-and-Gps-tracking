@@ -1,1 +1,0 @@
-web: gunicorn AutomaticPayrollSystem.wsgi --log-file -
