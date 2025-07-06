@@ -79,28 +79,20 @@ cd HRIS-FaceRecognition
 Create a virtual environment
 
 ```bash
-Copy
-Edit
 python -m venv env
 source env/bin/activate     # On Windows: env\Scripts\activate
 ```
 Install requirements
 ```bash
-Copy
-Edit
 pip install -r requirements.txt
 ```
 Run Django server
 ```bash
-Copy
-Edit
 python manage.py runserver
 ```
 Run Flask camera service
 
 ```bash
-Copy
-Edit
 cd flask_camera_service
 python app.py
 ```
